@@ -9,43 +9,45 @@ const listingSchema = new Schema({
   },
   description: String,
   image: {
-    type: String,
-    required: true
+    url: String,
+    filename: String
   },
-  price: Number,
+  price: {
+    type: Number,
+    required: true,
+    min: 0
+  },
   location: String,
   country: String,
-  reviews:[
+  reviews: [
     {
-     type:Schema.Types.ObjectId,
-     ref:"Review",
+      type: Schema.Types.ObjectId,
+      ref: "Review",
     },
   ],
-  owner:{
-     type:Schema.Types.ObjectId,
-     ref:"user",
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
   },
-  // geometry:{
-  //   type:{
-  //     type:String,
-  //     enum:["point"],
-  //     required:true,
-  //   },
-  //   coordinates:{
-  //     type:[Number],
-  //     required:true,
-  //   },
-  // },
-  // category:{
-  //   type:String,
-  //   enum:["mountains","arctic","farm","deserts"],
-  // }
-});
-listingSchema.post("findOneAndDelete",async(listing)=>{
-  if(listing){
-await Review.deleteMany({_id:{$in: listing.reviews}});
+  geometry: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    }
   }
+}, { timestamps: true }); // ✅ adds createdAt and updatedAt
 
-})
+// Middleware to delete associated reviews when a listing is removed
+listingSchema.post("findOneAndDelete", async (listing) => {
+  if (listing) {
+    await Review.deleteMany({ _id: { $in: listing.reviews } });
+  }
+});
+
 const Listing = mongoose.model("Listing", listingSchema);
 module.exports = Listing;

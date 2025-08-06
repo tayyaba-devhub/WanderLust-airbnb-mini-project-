@@ -1,0 +1,23 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <h2>Edit Your Review</h2>
+  <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=PUT" method="POST">
+    <div class="mb-3">
+      <label for="rating" class="form-label">Rating</label>
+      <select id="rating" name="review[rating]" class="form-select">
+        <% for (let i = 1; i <= 5; i++) { %>
+          <option value="<%= i %>" <%= review.rating === i ? "selected" : "" %>><%= i %></option>
+        <% } %>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="comment" class="form-label">Comment</label>
+      <textarea id="comment" name="review[comment]" class="form-control" rows="4"><%= review.comment %></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Review</button>
+    <a href="/listings/<%= listing._id %>" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
